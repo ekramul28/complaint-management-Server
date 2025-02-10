@@ -12,3 +12,78 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  role     Role
+  
+  admin    Admin?
+  customer Customer?
+
+  Reply Reply[]
+}
+
+model Admin {
+  userId   String @id
+  user     User   @relation(fields: [userId], references: [id])
+  department String
+  assignedTickets Ticket[] @relation("AdminAssignedTickets")
+
+  Ticket Ticket[]
+}
+
+model Customer {
+  userId   String @id
+  user     User   @relation(fields: [userId], references: [id])
+  phone    String
+  address  String
+  tickets  Ticket[] @relation("CustomerCreatedTickets")
+
+  Ticket Ticket[]
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  subject     String
+  description String
+  status      Status   @default(OPEN)
+  
+  customerId  String  
+  customer    Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+  
+  adminId     String?  
+  admin       Admin? @relation(fields: [adminId], references: [userId], onDelete: SetNull)
+  
+  replies     Reply[]
+  createdAt   DateTime @default(now())
+
+  Admin Admin[] @relation("AdminAssignedTickets")
+
+  Customer Customer[] @relation("CustomerCreatedTickets")
+}
+
+model Reply {
+  id        String   @id @default(uuid())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  message   String
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum Status {
+  OPEN
+  RESOLVED
+  CLOSED
+}
