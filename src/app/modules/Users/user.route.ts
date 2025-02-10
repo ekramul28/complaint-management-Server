@@ -30,31 +30,4 @@ router.post(
   }
 );
 
-router.post(
-  "/create-vendor",
-  auth(Role.ADMIN),
-  fileUploader.upload.single("file"),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = userValidation.createVendor.parse(JSON.parse(req.body.data));
-    return userController.createVendor(req, res, next);
-  }
-);
-
-router.patch(
-  "/:id/status",
-  auth(Role.ADMIN),
-  validateRequest(userValidation.updateStatus),
-  userController.changeProfileStatus
-);
-
-router.patch(
-  "/update-my-profile",
-  auth(Role.ADMIN, Role.CUSTOMER),
-  fileUploader.upload.single("file"),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
-    return userController.updateMyProfie(req, res, next);
-  }
-);
-
 export const userRoutes = router;

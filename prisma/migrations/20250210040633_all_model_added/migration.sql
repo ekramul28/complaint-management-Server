@@ -1,65 +1,16 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'CUSTOMER');
 
-  - You are about to drop the `Admin` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Customer` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Ticket` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-  - Added the required column `updatedAt` to the `Reply` table without a default value. This is not possible if the table is not empty.
-
-*/
--- DropForeignKey
-ALTER TABLE "Admin" DROP CONSTRAINT "Admin_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Customer" DROP CONSTRAINT "Customer_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Reply" DROP CONSTRAINT "Reply_ticketId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Reply" DROP CONSTRAINT "Reply_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Ticket" DROP CONSTRAINT "Ticket_adminId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Ticket" DROP CONSTRAINT "Ticket_customerId_fkey";
-
--- DropForeignKey
-ALTER TABLE "_AdminAssignedTickets" DROP CONSTRAINT "_AdminAssignedTickets_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_AdminAssignedTickets" DROP CONSTRAINT "_AdminAssignedTickets_B_fkey";
-
--- DropForeignKey
-ALTER TABLE "_CustomerCreatedTickets" DROP CONSTRAINT "_CustomerCreatedTickets_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_CustomerCreatedTickets" DROP CONSTRAINT "_CustomerCreatedTickets_B_fkey";
-
--- AlterTable
-ALTER TABLE "Reply" ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
-
--- DropTable
-DROP TABLE "Admin";
-
--- DropTable
-DROP TABLE "Customer";
-
--- DropTable
-DROP TABLE "Ticket";
-
--- DropTable
-DROP TABLE "User";
+-- CreateEnum
+CREATE TYPE "Status" AS ENUM ('OPEN', 'RESOLVED', 'CLOSED');
 
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "Role" NOT NULL,
+    "profilePhoto" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -70,6 +21,9 @@ CREATE TABLE "users" (
 CREATE TABLE "admins" (
     "userId" TEXT NOT NULL,
     "department" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "profilePhoto" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -80,7 +34,10 @@ CREATE TABLE "admins" (
 CREATE TABLE "customers" (
     "userId" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "profilePhoto" TEXT,
+    "email" TEXT NOT NULL,
     "address" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -101,8 +58,42 @@ CREATE TABLE "tickets" (
     CONSTRAINT "tickets_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Reply" (
+    "id" TEXT NOT NULL,
+    "ticketId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Reply_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_AdminAssignedTickets" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_AdminAssignedTickets_AB_pkey" PRIMARY KEY ("A","B")
+);
+
+-- CreateTable
+CREATE TABLE "_CustomerCreatedTickets" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CustomerCreatedTickets_AB_pkey" PRIMARY KEY ("A","B")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE INDEX "_AdminAssignedTickets_B_index" ON "_AdminAssignedTickets"("B");
+
+-- CreateIndex
+CREATE INDEX "_CustomerCreatedTickets_B_index" ON "_CustomerCreatedTickets"("B");
 
 -- AddForeignKey
 ALTER TABLE "admins" ADD CONSTRAINT "admins_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

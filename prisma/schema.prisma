@@ -14,53 +14,52 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  password  String
-  role      Role
+  id           String  @id @default(uuid())
+  email        String  @unique
+  password     String
+  role         Role
   profilePhoto String?
-  admin     Admin?
-  customer  Customer?
+  admin        Admin?
+  customer     Customer?
 
-  replies   Reply[]
+  replies      Reply[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   @@map("users")
 }
 
 model Admin {
-  userId   String  @id
-  user     User    @relation(fields: [userId], references: [id])
-  department String
-  email String
-  name String
-  profilePhoto String?
+  userId        String  @id
+  user          User    @relation(fields: [userId], references: [id])
+  department    String
+  email         String  @unique
+  name          String
+  profilePhoto  String?
   assignedTickets Ticket[] @relation("AdminAssignedTickets")
 
-  tickets  Ticket[]
+  tickets       Ticket[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-    @@map("admins")
-
+  @@map("admins")
 }
 
 model Customer {
-  userId   String  @id
-  user     User    @relation(fields: [userId], references: [id])
-  phone    String
-  profilePhoto String?
-  email String
-  address  String
-  name   String
-  tickets  Ticket[] @relation("CustomerCreatedTickets")
+  userId        String  @id @default(uuid())
+  user          User    @relation(fields: [userId], references: [id])
+  phone         String
+  profilePhoto  String?
+  email         String  @unique
+  address       String
+  name          String
+  tickets       Ticket[] @relation("CustomerCreatedTickets")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  Ticket Ticket[]
+  Ticket        Ticket[]
 
   @@map("customers")
 }
@@ -85,9 +84,7 @@ model Ticket {
   Admin       Admin[] @relation("AdminAssignedTickets")
   Customer    Customer[] @relation("CustomerCreatedTickets")
     
-    
   @@map("tickets")
-
 }
 
 model Reply {

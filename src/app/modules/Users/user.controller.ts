@@ -26,16 +26,6 @@ const createCustomer = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const createVendor = catchAsync(async (req: Request, res: Response) => {
-  const result = await userService.createVendor(req);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Vendor Created successfully!",
-    data: result,
-  });
-});
-
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   // console.log(req.query)
   const filters = pick(req.query, userFilterableFields);
@@ -49,18 +39,6 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     message: "Users data fetched!",
     meta: result.meta,
     data: result.data,
-  });
-});
-
-const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await userService.changeProfileStatus(id, req.body);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Users profile status changed!",
-    data: result,
   });
 });
 
@@ -79,27 +57,9 @@ const getMyProfile = catchAsync(
   }
 );
 
-const updateMyProfie = catchAsync(
-  async (req: Request & { user?: IAuthUser }, res: Response) => {
-    const user = req.user;
-
-    const result = await userService.updateMyProfie(user as IAuthUser, req);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "My profile updated!",
-      data: result,
-    });
-  }
-);
-
 export const userController = {
   createCustomer,
   createAdmin,
-  createVendor,
   getAllFromDB,
-  changeProfileStatus,
   getMyProfile,
-  updateMyProfie,
 };
