@@ -71,8 +71,6 @@ model Ticket {
   subject     String
   description String
   status      Status   @default(OPEN)
-  priority    Priority @default(MEDIUM)  // Default to Medium priority
-  expiryDate  DateTime
 
   customerId  String
   customer    Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
@@ -86,14 +84,10 @@ model Ticket {
   updatedAt   DateTime @updatedAt
 
   @@map("tickets")
-  Admin Admin[] @relation("AdminAssignedTickets")
   Customer Customer[] @relation("CustomerCreatedTickets")
+  Admin Admin[] @relation("AdminAssignedTickets")
 }
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-}
+
 
 model Reply {
   id        String   @id @default(uuid())

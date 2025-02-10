@@ -4,7 +4,6 @@ import { userValidation } from "./user.validation";
 import { userController } from "./user.controller";
 import auth from "../../middlewares/auth";
 import { fileUploader } from "../../helpars/fileUploader";
-import validateRequest from "../../middlewares/validateRequest";
 
 const router = express.Router();
 
