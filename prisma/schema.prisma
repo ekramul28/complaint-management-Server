@@ -21,8 +21,8 @@ model User {
   profilePhoto String?
   admin        Admin?
   customer     Customer?
+  replies     Reply[]
 
-  replies      Reply[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -30,12 +30,11 @@ model User {
 }
 
 model Admin {
-  userId        String  @id
-  user          User    @relation(fields: [userId], references: [id])
+  id        String  @id @default(uuid())
   department    String
   email         String  @unique
+  user        User     @relation(fields: [email], references: [email])
   name          String
-  profilePhoto  String?
   assignedTickets Ticket[] @relation("AdminAssignedTickets")
 
   tickets       Ticket[]
@@ -47,11 +46,11 @@ model Admin {
 }
 
 model Customer {
-  userId        String  @id @default(uuid())
-  user          User    @relation(fields: [userId], references: [id])
+  id        String  @id @default(uuid())
   phone         String
   profilePhoto  String?
   email         String  @unique
+  user        User     @relation(fields: [email], references: [email])
   address       String
   name          String
   tickets       Ticket[] @relation("CustomerCreatedTickets")
@@ -65,7 +64,6 @@ model Customer {
 }
 
 
-
 model Ticket {
   id          String   @id @default(uuid())
   subject     String
@@ -73,34 +71,39 @@ model Ticket {
   status      Status   @default(OPEN)
 
   customerId  String
-  customer    Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+  customer    Customer @relation(fields: [customerId], references: [id])
 
   adminId     String?
-  admin       Admin?   @relation(fields: [adminId], references: [userId], onDelete: SetNull)
+  admin       Admin? @relation(fields: [adminId], references: [id])
 
   replies     Reply[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("tickets")
-  Customer Customer[] @relation("CustomerCreatedTickets")
   Admin Admin[] @relation("AdminAssignedTickets")
+  Customer Customer[] @relation("CustomerCreatedTickets")
+  @@map("tickets")
 }
 
 
 model Reply {
   id        String   @id @default(uuid())
   ticketId  String
-  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
   
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+
+ 
+
   message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+   @@map("reply")
 }
+
 
 enum Role {
   ADMIN

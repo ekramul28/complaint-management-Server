@@ -7,28 +7,28 @@ import { ticketValidation } from "./ticket.validation";
 
 const router = express.Router();
 
-router.post("/tickets", TicketController.createComplaintTicket);
+router.post("/", TicketController.createComplaintTicket);
 router.get(
   "/allTickets",
   auth(Role.ADMIN),
   TicketController.getAllComplaintTickets
 );
 router.get(
-  "/tickets",
+  "/:id",
   validateRequest(ticketValidation.createTicketSchema),
   auth(Role.CUSTOMER),
   TicketController.getSingleComplaintTickets
 );
 router.patch(
-  "/tickets",
+  "/:id",
   auth(Role.CUSTOMER),
   validateRequest(ticketValidation.updateTicketSchema),
   TicketController.UpdateComplaintTickets
 );
 router.delete(
-  "/tickets",
+  "/:id",
   auth(Role.CUSTOMER),
   TicketController.DeleteComplaintTickets
 );
 
-export const TicketsRoutes = router;
+export const ComplaintTicketsRoutes = router;
