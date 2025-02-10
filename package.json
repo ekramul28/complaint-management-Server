@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "prod": "NODE_ENV=production node ./dist/server.js",
+    "build": "tsc & prisma generate",
+    "vercel-build": "echo hello",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +24,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http-status": "^2.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
