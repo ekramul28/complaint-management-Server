@@ -64,27 +64,35 @@ model Customer {
   @@map("customers")
 }
 
+
+
 model Ticket {
   id          String   @id @default(uuid())
   subject     String
   description String
   status      Status   @default(OPEN)
-  
-  customerId  String  
+  priority    Priority @default(MEDIUM)  // Default to Medium priority
+  expiryDate  DateTime
+
+  customerId  String
   customer    Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
-  
-  adminId     String?  
+
+  adminId     String?
   admin       Admin?   @relation(fields: [adminId], references: [userId], onDelete: SetNull)
-  
+
   replies     Reply[]
-  
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  Admin       Admin[] @relation("AdminAssignedTickets")
-  Customer    Customer[] @relation("CustomerCreatedTickets")
-    
   @@map("tickets")
+  Admin Admin[] @relation("AdminAssignedTickets")
+  Customer Customer[] @relation("CustomerCreatedTickets")
+}
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
 }
 
 model Reply {
@@ -109,4 +117,10 @@ enum Status {
   OPEN
   RESOLVED
   CLOSED
+}
+
+enum UserStatus{
+  ACTIVE
+  BLOCKED
+  DELETED
 }
